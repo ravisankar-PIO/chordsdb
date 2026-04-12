@@ -43,4 +43,10 @@
     <string name="camera_rejected">You rejected the camera permission, so the QR code cannot be scanned.</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+
+    <string name="scroll_play">Play</string>
+    <string name="scroll_pause">Pause</string>
+    <string name="scroll_stop">Stop</string>
+    <string name="scroll_faster">Faster</string>
+    <string name="scroll_slower">Slower</string>
 </resources>

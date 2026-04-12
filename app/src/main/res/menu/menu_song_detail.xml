@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_scroll_play"
+        android:icon="@android:drawable/ic_media_play"
+        android:title="@string/scroll_play"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_scroll_pause"
+        android:icon="@android:drawable/ic_media_pause"
+        android:title="@string/scroll_pause"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_scroll_stop"
+        android:title="@string/scroll_stop"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_scroll_faster"
+        android:icon="@android:drawable/ic_media_ff"
+        android:title="@string/scroll_faster"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_scroll_slower"
+        android:icon="@android:drawable/ic_media_rew"
+        android:title="@string/scroll_slower"
+        app:showAsAction="always"/>
+
+</menu>
