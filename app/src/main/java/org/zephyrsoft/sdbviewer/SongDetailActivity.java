@@ -11,6 +11,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
+import com.google.android.material.appbar.AppBarLayout;
 
 /**
  * An activity representing a single Song detail screen. This
@@ -20,15 +21,16 @@ import androidx.core.widget.NestedScrollView;
  */
 public class SongDetailActivity extends AppCompatActivity {
 
-    private enum ScrollState { IDLE, SCROLLING, PAUSED }
+    private enum ScrollState { STOPPED, PLAYING, PAUSED }
 
-    // Speed persists across songs within a session (static field).
-    private static int speedLevel = 3;
+    private static final String KEY_SCROLL_SPEED = "scroll_speed";
     private static final int SPEED_MIN = 1;
     private static final int SPEED_MAX = 10;
     private static final int TICK_MS = 16; // ~60 fps
 
-    private ScrollState scrollState = ScrollState.IDLE;
+    private ScrollState scrollState = ScrollState.STOPPED;
+    private int scrollSpeed = 5;
+
     private final Handler scrollHandler = new Handler(Looper.getMainLooper());
     private final Runnable scrollRunnable = new Runnable() {
         @Override
@@ -39,17 +41,11 @@ public class SongDetailActivity extends AppCompatActivity {
                     stopScroll();
                     return;
                 }
-                scrollView.scrollBy(0, speedLevel);
+                scrollView.scrollBy(0, scrollSpeed * 2);
             }
             scrollHandler.postDelayed(this, TICK_MS);
         }
     };
-
-    private MenuItem playItem;
-    private MenuItem pauseItem;
-    private MenuItem stopItem;
-    private MenuItem fasterItem;
-    private MenuItem slowerItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +58,10 @@ public class SongDetailActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        if (savedInstanceState != null) {
+            scrollSpeed = savedInstanceState.getInt(KEY_SCROLL_SPEED, 5);
         }
 
         // savedInstanceState is non-null when there is fragment state
@@ -87,14 +87,48 @@ public class SongDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_SCROLL_SPEED, scrollSpeed);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_song_detail, menu);
-        playItem = menu.findItem(R.id.action_scroll_play);
-        pauseItem = menu.findItem(R.id.action_scroll_pause);
-        stopItem = menu.findItem(R.id.action_scroll_stop);
-        fasterItem = menu.findItem(R.id.action_scroll_faster);
-        slowerItem = menu.findItem(R.id.action_scroll_slower);
-        updateMenuVisibility();
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem playItem = menu.findItem(R.id.action_scroll_play);
+        MenuItem pauseItem = menu.findItem(R.id.action_scroll_pause);
+        MenuItem stopItem = menu.findItem(R.id.action_scroll_stop);
+        MenuItem fasterItem = menu.findItem(R.id.action_scroll_faster);
+        MenuItem slowerItem = menu.findItem(R.id.action_scroll_slower);
+
+        switch (scrollState) {
+            case STOPPED:
+                playItem.setVisible(true);
+                pauseItem.setVisible(false);
+                stopItem.setVisible(false);
+                fasterItem.setVisible(false);
+                slowerItem.setVisible(false);
+                break;
+            case PLAYING:
+                playItem.setVisible(false);
+                pauseItem.setVisible(true);
+                stopItem.setVisible(true);
+                fasterItem.setVisible(true);
+                slowerItem.setVisible(true);
+                break;
+            case PAUSED:
+                playItem.setVisible(false);
+                pauseItem.setVisible(false);
+                stopItem.setVisible(true);
+                fasterItem.setVisible(true);
+                slowerItem.setVisible(true);
+                break;
+        }
         return true;
     }
 
@@ -119,14 +153,10 @@ public class SongDetailActivity extends AppCompatActivity {
             stopScroll();
             return true;
         } else if (id == R.id.action_scroll_faster) {
-            if (speedLevel < SPEED_MAX) {
-                speedLevel++;
-            }
+            scrollSpeed = Math.min(scrollSpeed + 1, SPEED_MAX);
             return true;
         } else if (id == R.id.action_scroll_slower) {
-            if (speedLevel > SPEED_MIN) {
-                speedLevel--;
-            }
+            scrollSpeed = Math.max(scrollSpeed - 1, SPEED_MIN);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -136,7 +166,7 @@ public class SongDetailActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Restart scrolling after e.g. screen rotation
-        if (scrollState == ScrollState.SCROLLING) {
+        if (scrollState == ScrollState.PLAYING) {
             scrollHandler.post(scrollRunnable);
         }
     }
@@ -154,54 +184,29 @@ public class SongDetailActivity extends AppCompatActivity {
     }
 
     private void startScroll() {
-        scrollState = ScrollState.SCROLLING;
-        updateMenuVisibility();
+        AppBarLayout appBarLayout = findViewById(R.id.app_bar);
+        if (appBarLayout != null) {
+            appBarLayout.setExpanded(false, true);
+        }
+        scrollState = ScrollState.PLAYING;
+        invalidateOptionsMenu();
         scrollHandler.removeCallbacks(scrollRunnable);
         scrollHandler.post(scrollRunnable);
     }
 
     private void pauseScroll() {
         scrollState = ScrollState.PAUSED;
-        updateMenuVisibility();
+        invalidateOptionsMenu();
         scrollHandler.removeCallbacks(scrollRunnable);
     }
 
     private void stopScroll() {
-        scrollState = ScrollState.IDLE;
-        updateMenuVisibility();
+        scrollState = ScrollState.STOPPED;
+        invalidateOptionsMenu();
         scrollHandler.removeCallbacks(scrollRunnable);
         NestedScrollView scrollView = findViewById(R.id.song_detail_container);
         if (scrollView != null) {
             scrollView.scrollTo(0, 0);
-        }
-    }
-
-    private void updateMenuVisibility() {
-        if (playItem == null) {
-            return;
-        }
-        switch (scrollState) {
-            case IDLE:
-                playItem.setVisible(true);
-                pauseItem.setVisible(false);
-                stopItem.setVisible(false);
-                fasterItem.setVisible(false);
-                slowerItem.setVisible(false);
-                break;
-            case SCROLLING:
-                playItem.setVisible(false);
-                pauseItem.setVisible(true);
-                stopItem.setVisible(true);
-                fasterItem.setVisible(true);
-                slowerItem.setVisible(true);
-                break;
-            case PAUSED:
-                playItem.setVisible(true);
-                pauseItem.setVisible(false);
-                stopItem.setVisible(true);
-                fasterItem.setVisible(true);
-                slowerItem.setVisible(true);
-                break;
         }
     }
 }
