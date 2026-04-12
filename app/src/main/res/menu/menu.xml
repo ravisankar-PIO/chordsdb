@@ -1,0 +1,38 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_refresh"
+        app:showAsAction="never"
+        android:enabled="true"
+        android:title="@string/menu_refresh"
+        android:visible="true"/>
+
+    <item
+        android:id="@+id/action_settings"
+        app:showAsAction="never"
+        android:enabled="true"
+        android:title="@string/menu_settings"
+        android:visible="true"/>
+
+    <item
+        android:id="@+id/action_import_settings"
+        app:showAsAction="never"
+        android:enabled="true"
+        android:title="@string/menu_import_settings"
+        android:visible="true"/>
+
+    <item
+        android:id="@+id/action_about"
+        app:showAsAction="never"
+        android:enabled="true"
+        android:title="@string/about"
+        android:visible="true"/>
+
+</menu>
