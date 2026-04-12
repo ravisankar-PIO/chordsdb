@@ -122,7 +122,7 @@ public class SongDetailActivity extends AppCompatActivity {
                 slowerItem.setVisible(true);
                 break;
             case PAUSED:
-                playItem.setVisible(false);
+                playItem.setVisible(true);
                 pauseItem.setVisible(false);
                 stopItem.setVisible(true);
                 fasterItem.setVisible(true);
