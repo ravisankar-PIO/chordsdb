@@ -20,15 +20,15 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/action_scroll_faster"
-        android:icon="@android:drawable/ic_media_ff"
-        android:title="@string/scroll_faster"
-        app:showAsAction="always"/>
-
-    <item
         android:id="@+id/action_scroll_slower"
         android:icon="@android:drawable/ic_media_rew"
         android:title="@string/scroll_slower"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_scroll_faster"
+        android:icon="@android:drawable/ic_media_ff"
+        android:title="@string/scroll_faster"
         app:showAsAction="always"/>
 
 </menu>

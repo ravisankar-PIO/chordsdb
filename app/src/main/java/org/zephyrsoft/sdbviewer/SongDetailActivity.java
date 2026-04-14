@@ -1,9 +1,11 @@
 package org.zephyrsoft.sdbviewer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.core.app.NavUtils;
@@ -26,7 +28,7 @@ public class SongDetailActivity extends AppCompatActivity {
     private static final String KEY_SCROLL_SPEED = "scroll_speed";
     private static final int SPEED_MIN = 1;
     private static final int SPEED_MAX = 10;
-    private static final int TICK_MS = 16; // ~60 fps
+    private static final int TICK_MS = 20;
 
     private ScrollState scrollState = ScrollState.STOPPED;
     private int scrollSpeed = 5;
@@ -37,11 +39,13 @@ public class SongDetailActivity extends AppCompatActivity {
         public void run() {
             NestedScrollView scrollView = findViewById(R.id.song_detail_container);
             if (scrollView != null) {
-                if (!scrollView.canScrollVertically(1)) {
-                    stopScroll();
+                scrollView.scrollBy(0, scrollSpeed);
+                if (scrollView.getScrollY() >= (scrollView.getChildAt(0).getHeight() - scrollView.getHeight())) {
+                    scrollHandler.removeCallbacks(this);
+                    scrollState = ScrollState.STOPPED;
+                    invalidateOptionsMenu();
                     return;
                 }
-                scrollView.scrollBy(0, scrollSpeed * 2);
             }
             scrollHandler.postDelayed(this, TICK_MS);
         }
@@ -62,6 +66,9 @@ public class SongDetailActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             scrollSpeed = savedInstanceState.getInt(KEY_SCROLL_SPEED, 5);
+        } else {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            scrollSpeed = Integer.parseInt(prefs.getString("pref_default_scroll_speed", "5"));
         }
 
         // savedInstanceState is non-null when there is fragment state

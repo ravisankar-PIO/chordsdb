@@ -19,5 +19,11 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_songs_reload_interval_desc"/>
+    <ListPreference
+        android:key="pref_default_scroll_speed"
+        android:title="Default scroll speed"
+        android:entries="@array/scroll_speed_entries"
+        android:entryValues="@array/scroll_speed_values"
+        android:defaultValue="5"/>
     <!-- don't forget to add new preferences to Constants.AppPreference -->
 </PreferenceScreen>
