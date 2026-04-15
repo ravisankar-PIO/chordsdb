@@ -169,8 +169,7 @@ public class SongDetailFragment extends Fragment {
         }
 
         // Update capo indicator
-        // Phase 2: replace `int capo = 0` with `int capo = song.getCapo()`
-        int capo = 0;
+        int capo = (song != null) ? song.getCapo() : 0;
         if (capo > 0 && transposeOffset == 0) {
             capoIndicator.setVisibility(View.VISIBLE);
             capoIndicator.setText("🎸 Capo " + ordinal(capo) + " Fret");
