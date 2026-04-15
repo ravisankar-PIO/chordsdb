@@ -23,6 +23,7 @@ public class Song implements Serializable, Comparable<Song>, Parcelable {
     private String lyrics;
     private String image;
     private String imageRotation;
+    private int capo;
 
     public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>() {
         @Override
@@ -63,6 +64,7 @@ public class Song implements Serializable, Comparable<Song>, Parcelable {
         lyrics = in.readString();
         image = in.readString();
         imageRotation = in.readString();
+        capo = in.readInt();
     }
 
     @Override
@@ -81,6 +83,7 @@ public class Song implements Serializable, Comparable<Song>, Parcelable {
         dest.writeString(lyrics);
         dest.writeString(image);
         dest.writeString(imageRotation);
+        dest.writeInt(capo);
     }
 
     @Override
@@ -190,6 +193,14 @@ public class Song implements Serializable, Comparable<Song>, Parcelable {
 
     public void setChordSequence(String chordSequence) {
         this.chordSequence = chordSequence;
+    }
+
+    public int getCapo() {
+        return capo;
+    }
+
+    public void setCapo(int capo) {
+        this.capo = capo;
     }
 
     public String getUUID() {
