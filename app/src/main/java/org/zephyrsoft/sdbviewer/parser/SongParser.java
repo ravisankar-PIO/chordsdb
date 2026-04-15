@@ -109,30 +109,60 @@ public class SongParser {
 		return "";
 	}
 	
-	/**
-	 * Determines if the given line contains only guitar chords.
-	 */
 	private static boolean isChordsLine(String line) {
-		return percentOfSpaces(line) >= 0.5;
+		// Normalise tabs to spaces so tab-aligned chord lines work correctly
+		String normalised = line.replace("\t", " ");
+
+		// Empty or blank lines are not chord lines
+		if (normalised.trim().isEmpty()) return false;
+
+		// Split into tokens on whitespace
+		String[] tokens = normalised.trim().split("\\s+");
+		if (tokens.length == 0) return false;
+
+		int recognised = 0;
+		for (String token : tokens) {
+			if (looksLikeChordToken(token)) recognised++;
+		}
+
+		// At least 60% of tokens must look like chords or valid notation
+		return (double) recognised / tokens.length >= 0.6;
 	}
-	
-	/**
-	 * Calculates the percentage of spaces in the given string.
-	 * 
-	 * @return a value between 0.0 and 1.0
-	 */
-	private static double percentOfSpaces(String toParse) {
-		int spacesCount = 0;
-		for (int i = 0; i < toParse.length(); i++) {
-			if (toParse.substring(i, i + 1).equals(" ")) {
-				spacesCount++;
-			}
+
+	private static boolean looksLikeChordToken(String token) {
+		if (token == null || token.isEmpty()) return false;
+
+		// Accept common musical notation symbols
+		if (token.matches("[|]+|---+|X\\d+|\\|X\\d+")) return true;
+
+		// Strip surrounding parentheses for Style B inline chords like (Dm)
+		if (token.startsWith("(") && token.endsWith(")")) {
+			token = token.substring(1, token.length() - 1);
 		}
-		if (toParse.length() != 0) {
-			return (double) spacesCount / (double) toParse.length();
-		} else {
-			return 0.0;
+
+		// Must start with a valid note letter A-G uppercase only
+		if (token.isEmpty()) return false;
+		if ("ABCDEFG".indexOf(token.charAt(0)) < 0) return false;
+
+		// Safety check: if the token contains any non-ASCII character
+		// (e.g. Tamil script), it is definitely not a chord
+		for (int i = 0; i < token.length(); i++) {
+			if (token.charAt(i) > 127) return false;
 		}
+
+		// Match valid chord pattern including:
+		// - Standard: C, Dm, G#m, F#m, Bb, Am7
+		// - Suspended: Dsus2, Asus4
+		// - Slash: Am/G, F/C
+		// - Transition pairs: DmEm, EmF, FG
+		return token.matches(
+			"[A-G][#b]?" +
+			"(m|maj|min|dim|aug|sus)?" +
+			"\\d{0,2}" +
+			"(sus\\d|maj\\d|add\\d)?" +
+			"([A-G][#b]?(m|maj|min|dim|aug|sus)?\\d{0,2})?" +
+			"(/[A-G][#b]?(m|maj|min|dim|aug|sus)?\\d{0,2})?"
+		);
 	}
 
 	/**
