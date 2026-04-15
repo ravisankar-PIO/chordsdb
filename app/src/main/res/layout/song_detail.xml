@@ -1,11 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/song_detail"
-    style="?android:attr/textAppearanceLarge"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:keepScreenOn="true"
-    android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context=".SongDetailFragment" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Transpose bar: always visible -->
+    <LinearLayout
+        android:id="@+id/transpose_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transpose  "
+            android:textSize="14sp"/>
+
+        <Button
+            android:id="@+id/btn_transpose_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="▼"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <TextView
+            android:id="@+id/transpose_offset_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="14sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btn_transpose_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="▲"
+            style="?android:attr/borderlessButtonStyle"/>
+
+    </LinearLayout>
+
+    <!-- Capo indicator: only shown when capo > 0 and offset == 0 -->
+    <TextView
+        android:id="@+id/capo_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="4dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+    <!-- Lyrics -->
+    <TextView
+        android:id="@+id/song_detail"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"
+        android:padding="16dp"
+        android:textIsSelectable="true"/>
+
+</LinearLayout>

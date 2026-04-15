@@ -16,6 +16,7 @@
 
     <item
         android:id="@+id/action_scroll_stop"
+        android:icon="@drawable/ic_stop"
         android:title="@string/scroll_stop"
         app:showAsAction="always"/>
 

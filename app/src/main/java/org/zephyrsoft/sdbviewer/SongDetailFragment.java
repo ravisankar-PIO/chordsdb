@@ -16,9 +16,11 @@ import android.text.style.TypefaceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.zephyrsoft.sdbviewer.model.Song;
+import org.zephyrsoft.sdbviewer.parser.ChordTransposer;
 import org.zephyrsoft.sdbviewer.parser.SongParser;
 
 import java.util.List;
@@ -35,6 +37,10 @@ public class SongDetailFragment extends Fragment {
      * The song this fragment is presenting.
      */
     private Song song;
+
+    private int transposeOffset = 0;
+    private boolean showChords;
+    private boolean showTranslation;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -80,53 +86,103 @@ public class SongDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.song_detail, container, false);
 
         if (song != null) {
-            boolean showTranslation = getBooleanPreference(inflater.getContext().getString(R.string.pref_show_translation));
-            boolean showChords = getBooleanPreference(inflater.getContext().getString(R.string.pref_show_chords));
+            showTranslation = getBooleanPreference(inflater.getContext().getString(R.string.pref_show_translation));
+            showChords = getBooleanPreference(inflater.getContext().getString(R.string.pref_show_chords));
 
-            List<SongParser.SongElement> parsedLyrics = SongParser.parseLyrics(song, showChords, showTranslation);
-            List<SongParser.SongElement> parsedCopyright = SongParser.parseCopyright(song);
+            Button btnUp = rootView.findViewById(R.id.btn_transpose_up);
+            Button btnDown = rootView.findViewById(R.id.btn_transpose_down);
 
-            boolean parsedSongContainsChords = false;
-            for (SongParser.SongElement element : parsedLyrics) {
-                if (element.getType() == SongParser.SongElementEnum.CHORDS) {
-                    parsedSongContainsChords = true;
-                    break;
-                }
-            }
+            btnUp.setOnClickListener(v -> {
+                transposeOffset++;
+                refreshLyrics(rootView);
+            });
+            btnDown.setOnClickListener(v -> {
+                transposeOffset--;
+                refreshLyrics(rootView);
+            });
 
-            SpannableStringBuilder formatted = new SpannableStringBuilder();
-
-            for (SongParser.SongElement element : parsedLyrics) {
-                int start = formatted.length();
-                formatted.append(element.getElement());
-                int end = formatted.length();
-
-                if (element.getType() == SongParser.SongElementEnum.TRANSLATION) {
-                    formatted.setSpan(new RelativeSizeSpan(0.65f), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    formatted.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-                if (showChords && parsedSongContainsChords
-                    && (element.getType() == SongParser.SongElementEnum.LYRICS || element.getType() == SongParser.SongElementEnum.CHORDS)) {
-                    formatted.setSpan(new TypefaceSpan("monospace"), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    formatted.setSpan(new RelativeSizeSpan(0.8f), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-            }
-
-            if (parsedCopyright.size() > 0) {
-                formatted.append("\n\n");
-            }
-            for (SongParser.SongElement element : parsedCopyright) {
-                int start = formatted.length();
-                formatted.append("\n").append(element.getElement());
-                int end = formatted.length();
-
-                formatted.setSpan(new RelativeSizeSpan(0.65f), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                formatted.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            ((TextView) rootView.findViewById(R.id.song_detail)).setText(formatted);
+            refreshLyrics(rootView);
         }
 
         return rootView;
+    }
+
+    private void refreshLyrics(View rootView) {
+        TextView lyricsView = rootView.findViewById(R.id.song_detail);
+        TextView offsetLabel = rootView.findViewById(R.id.transpose_offset_label);
+        TextView capoIndicator = rootView.findViewById(R.id.capo_indicator);
+
+        List<SongParser.SongElement> parsedLyrics = SongParser.parseLyrics(song, showChords, showTranslation);
+        List<SongParser.SongElement> parsedCopyright = SongParser.parseCopyright(song);
+
+        boolean parsedSongContainsChords = false;
+        for (SongParser.SongElement element : parsedLyrics) {
+            if (element.getType() == SongParser.SongElementEnum.CHORDS) {
+                parsedSongContainsChords = true;
+                break;
+            }
+        }
+
+        SpannableStringBuilder formatted = new SpannableStringBuilder();
+
+        for (SongParser.SongElement element : parsedLyrics) {
+            int start = formatted.length();
+            String text = element.getElement();
+            if (element.getType() == SongParser.SongElementEnum.CHORDS) {
+                text = ChordTransposer.transpose(text, transposeOffset);
+            }
+            formatted.append(text);
+            int end = formatted.length();
+
+            if (element.getType() == SongParser.SongElementEnum.TRANSLATION) {
+                formatted.setSpan(new RelativeSizeSpan(0.65f), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                formatted.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            if (showChords && parsedSongContainsChords
+                && (element.getType() == SongParser.SongElementEnum.LYRICS || element.getType() == SongParser.SongElementEnum.CHORDS)) {
+                formatted.setSpan(new TypefaceSpan("monospace"), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                formatted.setSpan(new RelativeSizeSpan(0.8f), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+
+        if (parsedCopyright.size() > 0) {
+            formatted.append("\n\n");
+        }
+        for (SongParser.SongElement element : parsedCopyright) {
+            int start = formatted.length();
+            formatted.append("\n").append(element.getElement());
+            int end = formatted.length();
+
+            formatted.setSpan(new RelativeSizeSpan(0.65f), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            formatted.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        lyricsView.setText(formatted);
+
+        // Update transpose offset label
+        if (transposeOffset == 0) {
+            offsetLabel.setText("0");
+        } else if (transposeOffset > 0) {
+            offsetLabel.setText("+" + transposeOffset);
+        } else {
+            offsetLabel.setText(String.valueOf(transposeOffset));
+        }
+
+        // Update capo indicator
+        // Phase 2: replace `int capo = 0` with `int capo = song.getCapo()`
+        int capo = 0;
+        if (capo > 0 && transposeOffset == 0) {
+            capoIndicator.setVisibility(View.VISIBLE);
+            capoIndicator.setText("🎸 Capo " + ordinal(capo) + " Fret");
+        } else {
+            capoIndicator.setVisibility(View.GONE);
+        }
+    }
+
+    private String ordinal(int n) {
+        if (n == 1) return "1st";
+        if (n == 2) return "2nd";
+        if (n == 3) return "3rd";
+        return n + "th";
     }
 }
