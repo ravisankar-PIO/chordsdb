@@ -36,7 +36,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.zephyrsoft.sdbviewer.SongListActivity" />
+                android:value="com.oliyan.isai.SongListActivity" />
         </activity>
         <activity
             android:name=".SettingsActivity"
@@ -45,7 +45,7 @@
             android:parentActivityName=".SongListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.zephyrsoft.sdbviewer.SongListActivity" />
+                android:value="com.oliyan.isai.SongListActivity" />
         </activity>
         <activity
             android:name=".QRScannerActivity"
@@ -54,7 +54,7 @@
             android:parentActivityName=".SongListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.zephyrsoft.sdbviewer.SongListActivity" />
+                android:value="com.oliyan.isai.SongListActivity" />
         </activity>
         <activity
             android:name=".AboutActivity"
@@ -63,7 +63,7 @@
             android:parentActivityName=".SongListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.zephyrsoft.sdbviewer.SongListActivity" />
+                android:value="com.oliyan.isai.SongListActivity" />
         </activity>
     </application>
 

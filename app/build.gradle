@@ -17,7 +17,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    namespace = 'org.zephyrsoft.sdbviewer'
+    namespace = 'com.oliyan.isai'
 
     defaultConfig {
         applicationId "com.oliyan.isai"
