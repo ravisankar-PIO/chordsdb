@@ -31,10 +31,11 @@ public class DatabaseAccess {
     private static final String COL_LYRICS = "LYRICS";
     private static final String COL_IMAGE = "IMAGE";
     private static final String COL_IMAGE_ROTATION = "IMAGE_ROTATION";
+    private static final String COL_CAPO = "CAPO";
 
     private static final String DATABASE = "SDBVIEWER";
     private static final String TABLE = "SONGS";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private final DatabaseOpenHelper databaseOpenHelper;
 
@@ -62,7 +63,8 @@ public class DatabaseAccess {
                 COL_CHORD_SEQUENCE + ", " +
                 COL_LYRICS + ", " +
                 COL_IMAGE + ", " +
-                COL_IMAGE_ROTATION + ")";
+                COL_IMAGE_ROTATION + ", " +
+                COL_CAPO + ")";
 
         DatabaseOpenHelper(Context context) {
             super(context, DATABASE, null, DATABASE_VERSION);
@@ -79,6 +81,9 @@ public class DatabaseAccess {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(Constants.LOG_TAG, "upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which destroys all old data");
+            if (oldVersion < 3) {
+                db.execSQL("ALTER TABLE " + TABLE + " ADD COLUMN " + COL_CAPO + " INTEGER DEFAULT 0");
+            }
             db.execSQL("DROP TABLE IF EXISTS " + TABLE);
             onCreate(db);
         }
@@ -118,6 +123,7 @@ public class DatabaseAccess {
             values.put(COL_LYRICS, song.getLyrics());
             values.put(COL_IMAGE, song.getImage());
             values.put(COL_IMAGE_ROTATION, song.getImageRotation());
+            values.put(COL_CAPO, song.getCapo());
 
             database.insert(TABLE, null, values);
         }
@@ -174,6 +180,7 @@ public class DatabaseAccess {
             song.setLyrics(cursor.getString(cursor.getColumnIndex(COL_LYRICS)));
             song.setImage(cursor.getString(cursor.getColumnIndex(COL_IMAGE)));
             song.setImageRotation(cursor.getString(cursor.getColumnIndex(COL_IMAGE_ROTATION)));
+            song.setCapo(cursor.getInt(cursor.getColumnIndex(COL_CAPO)));
 
             return song;
         }
