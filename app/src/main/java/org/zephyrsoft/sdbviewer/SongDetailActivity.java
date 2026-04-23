@@ -28,7 +28,7 @@ public class SongDetailActivity extends AppCompatActivity {
     private static final String KEY_SCROLL_SPEED = "scroll_speed";
     private static final int SPEED_MIN = 1;
     private static final int SPEED_MAX = 10;
-    private static final int TICK_MS = 20;
+    private static final int TICK_MS = 200;
 
     private ScrollState scrollState = ScrollState.STOPPED;
     private int scrollSpeed = 5;
