@@ -20,15 +20,15 @@ android {
     namespace = 'org.zephyrsoft.sdbviewer'
 
     defaultConfig {
-        applicationId "org.zephyrsoft.sdbviewer"
+        applicationId "com.oliyan.isai"
         minSdkVersion 23
         targetSdk = 36
         compileSdk = 36
         // has to match the version used in Earthfile:
         buildToolsVersion "36.0.0"
 
-        versionCode 14                // increment after every release (for the next development cycle)
-        versionName "1.10-SNAPSHOT"   // change with every release
+        versionCode 1                 // increment after every release (for the next development cycle)
+        versionName "1.0"             // change with every release
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -42,7 +42,7 @@ android {
     // rename final APK files
     androidComponents.onVariants(androidComponents.selector().all()) { variant ->
         variant.outputs.forEach { output ->
-            output.outputFileName.set(output.outputFileName.get().replace("app-", "SDBViewer_${defaultConfig.versionName}_${buildTime()}-"))
+            output.outputFileName.set(output.outputFileName.get().replace("app-", "Isai_${defaultConfig.versionName}_${buildTime()}-"))
         }
     }
 }

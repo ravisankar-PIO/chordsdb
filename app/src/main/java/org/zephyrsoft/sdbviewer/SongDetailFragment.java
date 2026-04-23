@@ -10,10 +10,12 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import androidx.fragment.app.Fragment;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.view.LayoutInflater;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -142,6 +144,9 @@ public class SongDetailFragment extends Fragment {
                 && (element.getType() == SongParser.SongElementEnum.LYRICS || element.getType() == SongParser.SongElementEnum.CHORDS)) {
                 formatted.setSpan(new TypefaceSpan("monospace"), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 formatted.setSpan(new RelativeSizeSpan(0.8f), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            if (element.getType() == SongParser.SongElementEnum.CHORDS) {
+                formatted.setSpan(new ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.colorChord)), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
 
