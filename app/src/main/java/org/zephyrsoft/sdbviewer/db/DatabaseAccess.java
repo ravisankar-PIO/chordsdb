@@ -81,9 +81,8 @@ public class DatabaseAccess {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(Constants.LOG_TAG, "upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which destroys all old data");
-            if (oldVersion < 3) {
-                db.execSQL("ALTER TABLE " + TABLE + " ADD COLUMN " + COL_CAPO + " INTEGER DEFAULT 0");
-            }
+            // FTS4 virtual tables do not support ALTER TABLE ADD COLUMN.
+            // Drop and recreate is the only safe migration path.
             db.execSQL("DROP TABLE IF EXISTS " + TABLE);
             onCreate(db);
         }
