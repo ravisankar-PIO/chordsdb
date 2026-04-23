@@ -1,5 +1,14 @@
-This app can display the data produced and managed by <a href="https://zephyrsoft.org/sdb">Song Database</a> if the file is accessible via URL (web address). It cannot be used for anything else, so if you don't use Song Database, this app isn't meant for you!
+Isai is a lyrics and guitar chords viewer designed for live worship performance. It fetches your song library from a user-configured URL, caches it locally for offline use, and displays lyrics with guitar chords in a clean, readable format.
 
-You can view the song lyrics, any available translation and the guitar chords (if available). Translation and chords can be disabled in the settings. The app keeps a local version of the data until it can fetch an update (after a timeout which is three days by default) so you can use it offline as well.
+<b>Features</b>
+• Auto-scroll — tap Play to begin smooth continuous scrolling at your chosen speed. Adjust speed on the fly with the + and − buttons, pause to hold your place, or stop to return to the top.
+• Transpose — raise or lower all chords on the current song by any number of semitones using the ▲ ▼ buttons shown above the lyrics.
+• Capo indicator — when a song specifies a capo fret, it is shown clearly above the lyrics.
+• Offline cache — songs are stored locally and refreshed in the background on a configurable schedule (default: every few hours).
+• Search — quickly filter songs by title, lyrics, composer, or any other field.
+• QR code import — scan a QR code to configure the songs URL without typing.
 
-<i>If you are the administrator of your Song Database installation and don't want to upload the file containing the songs every time you modify it, you could set up a synchronisation solution like <a href="https://nextcloud.com">Nextcloud</a> and use the "share link" functionality - the resulting link has to be used in the app. In case you don't want to force all users to enter the link manually: The app can be configured by scanning a QR code. For more information on that, see the homepage.</i>
+<b>Setup</b>
+You need a URL pointing to a songs XML file. Enter it in Settings, or scan a QR code. The app will fetch and cache your library automatically.
+
+Translation and chord display can each be toggled in Settings.

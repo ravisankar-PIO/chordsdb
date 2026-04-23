@@ -41,23 +41,20 @@ much much better
         <chordSequence></chordSequence>
         <composer></composer>
         <language>english</language>
-        <lyrics>This app is used to display
-the data produced by Song Database,
-an open source software which you can get at
-https://zephyrsoft.org/sdb
+        <lyrics>Isai displays lyrics and guitar chords
+for live worship performance.
 
-You have to upload the file "songs.xml"
-to a place which is publicly accessible
-so this app can display the data in it.
+Point it at a URL containing your songs XML file
+by going to Settings and entering the address,
+or scan a QR code to configure it automatically.
 
-You can also use a synchronization solution
-like Nextcloud (see https://nextcloud.com).
+The app caches your library locally so it works
+offline between refreshes.
 
-If you use Song Database but are unsure how to
-upload your songs and access it with this app,
-you are welcome to write me an email.
-My contact details are at
-https://zephyrsoft.org/contact-about-me</lyrics>
+While viewing a song you can:
+- Auto-scroll at adjustable speed (Play button)
+- Transpose chords up or down (arrows above lyrics)
+- See the capo fret when specified by the song</lyrics>
         <title>How This App Is Used</title>
         <uuid>1e48767c-6cc8-48ea-917a-e894d93c149b</uuid>
     </song>
